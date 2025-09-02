@@ -1,8 +1,45 @@
-use master;
-drop database if exists MovieRec;
-go
-create database MovieRec collate Croatian_CI_AS;
-go
-use MovieRec;
+USE MASTER;
+DROP DATABASE IF exists MovieRec;
+GO
+CREATE DATABASE MovieRec collate Croatian_CI_AS;
+GO
+USE MovieRec;
 
-create 
+-- TABLES --
+
+CREATE TABLE Genre(
+	GenreID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	genreName nvarchar(100) NOT NULL
+);
+
+CREATE TABLE Movie(
+	MovieID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	title varchar(255) NOT NULL,
+	releaseYear int NOT NULL,
+	GenreID int,
+	descriptions varchar(300),
+	Rating FLOAT NULL,
+	posterURL nvarchar(500) NULL
+);
+
+CREATE TABLE Users(
+	UsersID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	username NVARCHAR(100) NOT NULL,
+	email NVARCHAR(255) NOT NULL,
+	passwordHash NVARCHAR(255) NOT NULL,
+	createdAt DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Rating(
+	RatingID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	UsersID INT NOT NULL,
+	MovieID INT NOT NULL,
+	score FLOAT NOT NULL,
+	ratedAt DATETIME DEFAULT GETDATE()
+);
+
+-- RELATIONS --
+ALTER TABLE Movie ADD FOREIGN KEY (GenreID) REFERENCES Genre (GenreID);
+ALTER TABLE Rating ADD FOREIGN KEY (UsersID) REFERENCES Users (UsersID);
+ALTER TABLE Rating ADD FOREIGN KEY (MovieID) REFERENCES Movie (MovieID);
+
